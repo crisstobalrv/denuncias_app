@@ -1,16 +1,60 @@
-# denuncias_app
+# App de Denuncias DUOC – Flutter + Flask + Ngrok
 
-A new Flutter project.
+Aplicación móvil para **denunciar problemas de aseo y riesgos** dentro de la comunidad estudiantil DUOC.
 
-## Getting Started
+Incluye:
 
-This project is a starting point for a Flutter application.
+- **Backend** en Flask + SQLite + subida de imágenes
+- **Exposición pública** de la API usando Ngrok
+- **App móvil** en Flutter con 3 pantallas:
+  - Crear nueva denuncia
+  - Listar denuncias
+  - Ver detalle de una denuncia
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 1. Tecnologías utilizadas
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Backend (server-flask)
+
+- Python 3.x
+- Flask
+- Flask-CORS
+- SQLite
+- SQLAlchemy
+- Ngrok
+
+### Frontend (app-flutter)
+
+- Flutter SDK 3.x
+- Dart
+- HTTP package
+- Image Picker (cámara)
+- Geolocator (ubicación)
+- Material Design
+
+---
+
+## 2. Estructura del repositorio
+
+```text
+/
+├── server-flask/
+│   ├── app.py
+│   ├── database.py
+│   ├── models.py
+│   ├── denuncias.db        # (se genera al ejecutar)
+│   └── uploads/            # imágenes subidas
+│
+└── app-flutter/
+    ├── lib/
+    │   ├── main.dart
+    │   ├── models/
+    │   │   └── denuncia.dart
+    │   ├── services/
+    │   │   └── api_service.dart
+    │   └── screens/
+    │       ├── new_report_screen.dart
+    │       ├── report_list_screen.dart
+    │       └── report_detail_screen.dart
+    └── android/ ...        # proyecto Flutter estándar
