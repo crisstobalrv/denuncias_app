@@ -50,9 +50,23 @@ class _ReportListScreenState extends State<ReportListScreen> {
               itemBuilder: (context, index) {
                 final d = denuncias[index];
                 return ListTile(
-                  leading: const Icon(Icons.report),
+                  leading: d.fotoUrl.isNotEmpty
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      d.fotoUrl,
+                      width: 56,
+                      height: 56,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                      : const Icon(Icons.report),
                   title: Text(d.correo),
-                  subtitle: Text(d.descripcion),
+                  subtitle: Text(
+                    d.descripcion,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   onTap: () {
                     Navigator.pushNamed(
                       context,

@@ -100,5 +100,27 @@ def get_image(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
+# ===== Servir imágenes =====
+@app.delete("/api/denuncias/<int:id>")
+def eliminar_denuncia(id):
+    db = next(get_db())
+
+    denuncia = db.query(Denuncia).filter(Denuncia.id == id).first()
+
+    if not denuncia:
+        return jsonify({"error": "Denuncia no encontrada"}), 404
+
+    # Borrar imagen asociada
+    imagen_path = os.path.join(app.config["UPLOAD_FOLDER"], denuncia.foto)
+    if os.path.exists(imagen_path):
+        os.remove(imagen_path)
+
+    # Borrar registro de la base de datos
+    db.delete(denuncia)
+    db.commit()
+
+    return jsonify({"message": "Denuncia eliminada correctamente"}), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
