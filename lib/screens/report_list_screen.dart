@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../models/denuncia.dart';
 import '../services/api_service.dart';
+import '../services/auth_service.dart';
 
 class ReportListScreen extends StatefulWidget {
   const ReportListScreen({super.key});
@@ -11,6 +13,7 @@ class ReportListScreen extends StatefulWidget {
 
 class _ReportListScreenState extends State<ReportListScreen> {
   final ApiService apiService = ApiService();
+  final AuthService _authService = AuthService();
   late Future<List<Denuncia>> futureDenuncias;
 
   @override
@@ -25,11 +28,30 @@ class _ReportListScreenState extends State<ReportListScreen> {
     });
   }
 
+  Future<void> _logout() async {
+    await _authService.logout();
+    if (!mounted) return;
+
+    // Limpia el stack de navegación y vuelve al login
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/login',
+          (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Denuncias'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _refresh,
