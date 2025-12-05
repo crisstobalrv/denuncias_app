@@ -99,8 +99,6 @@ En android/app/src/main/AndroidManifest.xml:
 ### 5.5. Ejecutar la app
 En Android Studio ejecutamos la aplicacion.
 
-```text
-```
 ---
 
 ## 6. Pruebas de API (Postman)
