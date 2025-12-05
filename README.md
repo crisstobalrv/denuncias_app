@@ -1,7 +1,7 @@
-# App de Denuncias DUOC – Flutter + Flask + Ngrok
+# App de Denuncias DUOC
 
 - Asignatura: Desarrollo de Aplicaciones en Android
-- Evaluación 2 – Entrega 2
+- Evaluación 3 – Entrega 3
 - Integrante: Cristóbal Adolfo Retamal Vásquez
 
 ---
@@ -101,8 +101,85 @@ En Android Studio ejecutamos la aplicacion.
 
 ---
 
-## 6. Pruebas de API (Postman)
-### 6.1. Crear denuncia (POST)
+## 6.1. Autenticación con JWT en Flask
+El backend implementa autenticación mediante JSON Web Tokens (JWT).
+Los endpoints críticos requieren un token válido para ser utilizados.
+
+Elementos implementados:
+- Endpoint /login que recibe correo y contraseña.
+- Generación de access_token usando flask-jwt-extended.
+- Claves SECRET_KEY y JWT_SECRET_KEY cargadas desde archivo .env (no incluidas en el repositorio).
+- Protección de endpoints con el decorador @jwt_required().
+
+Ejemplo de endpoint protegido:
+```text
+@app.post("/api/denuncias")
+@jwt_required()
+def crear_denuncia():
+...
+```
+Códigos de error manejados:
+- 401: Token faltante, inválido o expirado.
+- 422: Datos incompletos en el request.
+
+Credenciales de prueba para el endpoint /login:
+```text
+correo: alumno@duoc.cl
+password: 123456
+```
+
+## 6.2. Flujo de autenticación en Flutter
+La aplicación Flutter implementa:
+- Pantalla de Login.
+- Envío de correo/clave al endpoint /login.
+- Recepción del token JWT.
+- Almacenamiento seguro del token mediante flutter_secure_storage.
+
+El token se almacena en:
+```text
+const _tokenKey = 'jwt_token';
+```
+El token es consultado al iniciar la aplicación para decidir si el usuario debe ser dirigido al login o al listado de denuncias.
+
+## 6.3. Envío del token en llamadas HTTP
+El servicio ApiService agrega el header:
+```text
+Authorization: Bearer <token>
+```
+Ejemplo:
+```text
+request.headers['Authorization'] = 'Bearer $token';
+```
+Esto permite que Flask valide el JWT en los endpoints protegidos.
+
+## 6.4. Cierre de sesión
+El usuario puede cerrar sesión desde la pantalla de listado.
+
+El botón “logout” ejecuta:
+```text
+await _authService.logout();
+```
+El token se elimina del almacenamiento seguro y la app redirige a la pantalla de Login.
+
+## 6.5. Protección de pantalla
+La seguridad visual se implementó mediante la flag FLAG_SECURE directamente en Android.
+
+Código implementado:
+```text
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+}
+```
+
+Esto bloquea:
+- Capturas de pantalla
+- Grabación de pantalla
+- Vista previa en el selector de apps
+Cumple con el requisito de seguridad de impedir la divulgación visual de información.
+
+## 7. Pruebas de API (Postman)
+### 7.1. Crear denuncia (POST)
 En Postman:
 ```text
 Método: POST
@@ -120,7 +197,7 @@ Respuesta 201 con { "message": "Denuncia creada", "id": X }
 
 <img width="1161" height="729" alt="image" src="https://github.com/user-attachments/assets/35ddcc67-5e2c-4eac-8f9e-becb3694c337" />
 
-### 6.2. Listar denuncias (GET)
+### 7.2. Listar denuncias (GET)
 En Postman:
 ```text
 Método: GET
@@ -130,7 +207,7 @@ Respuesta: una lista JSON con las denuncias creadas
 ### Imagen:
 <img width="1148" height="766" alt="image" src="https://github.com/user-attachments/assets/7d9c0552-dd48-4ccc-8221-67e5b51bcf54" />
 
-### 6.3. Obtener denuncia por ID (GET /<id>)
+### 7.3. Obtener denuncia por ID (GET /<id>)
 En Postman:
 ```text
 Método: GET
@@ -144,21 +221,28 @@ Respuesta: una lista JSON con el detalle de la denuncia solicitada (1)
 
 ---
 
-## 7. Capturas de Pantalla
-### 7.1. Levantamiento del servidor Flask
+## 8. Capturas de Pantalla
+### 8.1. Levantamiento del servidor Flask
 <img width="990" height="180" alt="7 1 upflask" src="https://github.com/user-attachments/assets/dbf0ede7-502e-47a3-9fd2-88a160f900e3" />
 
-### 7.2. Ngrok activo
+### 8.2. Ngrok activo
 <img width="906" height="279" alt="image" src="https://github.com/user-attachments/assets/59142947-cf91-4cb9-871a-1aa3929a1a70" />
 
-### 7.3. App Flutter – Pantalla Listado
+### 8.3. App Flutter – Pantalla Listado
 <img width="323" height="711" alt="image" src="https://github.com/user-attachments/assets/25fff3a7-d7d6-4273-a197-ebb32d22d45e" />
 
-### 7.4. App Flutter – Nueva Denuncia
+### 8.4. App Flutter – Nueva Denuncia
 <img width="324" height="708" alt="image" src="https://github.com/user-attachments/assets/06f15c65-7f00-4404-a442-529661def4cd" />
 
-### 7.5. App Flutter – Detalle de Denuncia
+### 8.5. App Flutter – Detalle de Denuncia
 <img width="319" height="700" alt="image" src="https://github.com/user-attachments/assets/d9ec4d75-9370-46ec-aba8-56e76b5b31f9" />
+
+### 8.6. App Flutter – Pantalla Login
+<img width="522" height="1169" alt="image" src="https://github.com/user-attachments/assets/609e3c55-eae2-48a2-8060-7fab2fab9ae8" />
+
+### 9. Video demostrativo 
+https://drive.google.com/file/d/1I_HcQWencqW33M2gKAwdbHJsVHSKFG85/view?usp=drive_link
+
 
 
 
